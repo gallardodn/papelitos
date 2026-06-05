@@ -1,0 +1,8 @@
+{
+  "name": "papelitos/app",
+  "type": "project",
+  "require": {
+    "tecnickcom/tcpdf": "^6.7"
+  }
+}
+
