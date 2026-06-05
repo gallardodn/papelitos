@@ -6,11 +6,12 @@ $message = $message ?? 'Esta sección está en construcción.';
 $backTo = $backTo ?? '/menu';
 
 ?>
-<div class="bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-orange-100 border border-orange-100 p-8">
-  <h2 class="text-2xl font-bold mb-2"><?= htmlspecialchars((string)$heading, ENT_QUOTES, 'UTF-8') ?></h2>
-  <p class="text-slate-600 mb-6"><?= htmlspecialchars((string)$message, ENT_QUOTES, 'UTF-8') ?></p>
-  <a href="<?= htmlspecialchars((string)$backTo, ENT_QUOTES, 'UTF-8') ?>" class="inline-flex items-center rounded-2xl px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 transition">
-    Volver
-  </a>
+<div class="magic-card h-full w-full flex flex-col justify-center p-6 sm:p-10">
+  <div class="max-w-lg mx-auto w-full text-center">
+    <h2 class="text-3xl font-extrabold mb-3 text-white"><?= htmlspecialchars((string)$heading, ENT_QUOTES, 'UTF-8') ?></h2>
+    <p class="text-slate-200 mb-8"><?= htmlspecialchars((string)$message, ENT_QUOTES, 'UTF-8') ?></p>
+    <a href="<?= htmlspecialchars((string)$backTo, ENT_QUOTES, 'UTF-8') ?>" class="magic-btn inline-flex items-center rounded-2xl px-6 py-3 bg-white/10 text-white magic-glass font-extrabold transition">
+      Volver
+    </a>
+  </div>
 </div>
-
