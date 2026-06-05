@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-$username = $username ?? '';
+$email = $email ?? '';
 
 ?>
 <div class="bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-orange-100 border border-orange-100 p-8">
   <h2 class="text-2xl font-bold mb-2">Crear cuenta</h2>
-  <p class="text-slate-600 mb-6">Elegí un usuario y una contraseña.</p>
+  <p class="text-slate-600 mb-6">Usá tu correo electrónico y una contraseña.</p>
 
   <form method="post" action="/register" class="space-y-4">
     <input type="hidden" name="_csrf" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
 
     <label class="block">
-      <span class="text-sm font-semibold text-slate-700">Usuario</span>
-      <input name="username" value="<?= htmlspecialchars((string)$username, ENT_QUOTES, 'UTF-8') ?>" autocomplete="username" required
+      <span class="text-sm font-semibold text-slate-700">Correo electrónico</span>
+      <input type="email" name="email" value="<?= htmlspecialchars((string)$email, ENT_QUOTES, 'UTF-8') ?>" autocomplete="email" required
         class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-4 focus:ring-orange-100">
     </label>
 
@@ -40,4 +40,3 @@ $username = $username ?? '';
     <a class="font-semibold text-orange-700 hover:text-orange-800" href="/login">Ingresar</a>
   </div>
 </div>
-

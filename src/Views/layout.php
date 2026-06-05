@@ -28,8 +28,8 @@ $containerClass = $isPrint ? 'mx-auto px-0 py-0' : 'max-w-3xl mx-auto px-4 py-10
     <?php if (!$isPrint): ?>
       <header class="flex items-center justify-between mb-8">
         <a href="<?= $isAuthed ? '/menu' : '/' ?>" class="select-none">
-          <h1 class="text-4xl font-extrabold tracking-wide bg-gradient-to-r from-red-500 via-amber-500 via-lime-500 via-sky-500 to-violet-500 bg-clip-text text-transparent">
-            Papelitos
+          <h1 class="text-4xl font-extrabold tracking-wide">
+            <span class="text-sky-600">P</span><span class="text-yellow-500">a</span><span class="text-orange-500">p</span><span class="text-green-600">e</span><span class="text-amber-900">l</span><span class="text-violet-600">i</span><span class="text-red-600">t</span><span class="text-slate-900">o</span><span class="text-sky-600">s</span>
           </h1>
         </a>
         <?php if ($isAuthed): ?>

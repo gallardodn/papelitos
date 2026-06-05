@@ -38,10 +38,42 @@ try {
 
     $pdo->exec('CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
         created_at TEXT NOT NULL
     )');
+
+    $usersCols = $pdo->query("PRAGMA table_info('users')")?->fetchAll() ?: [];
+    $hasEmail = false;
+    $hasUsername = false;
+    foreach ($usersCols as $c) {
+        if (!is_array($c)) {
+            continue;
+        }
+        $name = (string)($c['name'] ?? '');
+        if ($name === 'email') {
+            $hasEmail = true;
+        } elseif ($name === 'username') {
+            $hasUsername = true;
+        }
+    }
+
+    if (!$hasEmail && $hasUsername) {
+        $pdo->exec('PRAGMA foreign_keys = OFF');
+        $pdo->beginTransaction();
+        $pdo->exec('CREATE TABLE users_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )');
+        $pdo->exec('INSERT INTO users_new (id, email, password_hash, created_at)
+            SELECT id, username, password_hash, created_at FROM users');
+        $pdo->exec('DROP TABLE users');
+        $pdo->exec('ALTER TABLE users_new RENAME TO users');
+        $pdo->commit();
+        $pdo->exec('PRAGMA foreign_keys = ON');
+    }
 
     $pdo->exec('CREATE TABLE IF NOT EXISTS books (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

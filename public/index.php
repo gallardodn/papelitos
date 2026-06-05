@@ -191,7 +191,7 @@ if (str_starts_with($path, '/u/') && $method === 'GET') {
 }
 
 if ($path === '/login' && $method === 'GET') {
-    render('auth/login', ['title' => 'Ingresar', 'username' => (string)flash_get('old_username', '')]);
+    render('auth/login', ['title' => 'Ingresar', 'email' => (string)flash_get('old_email', '')]);
     exit;
 }
 
@@ -201,22 +201,27 @@ if ($path === '/login' && $method === 'POST') {
         redirect('/login');
     }
 
-    $username = trim((string)($_POST['username'] ?? ''));
+    $email = mb_strtolower(trim((string)($_POST['email'] ?? '')));
     $password = (string)($_POST['password'] ?? '');
 
-    flash_set('old_username', $username);
+    flash_set('old_email', $email);
 
-    if ($username === '' || $password === '') {
-        flash_set('error', 'Completá usuario y contraseña.');
+    if ($email === '' || $password === '') {
+        flash_set('error', 'Completá correo y contraseña.');
         redirect('/login');
     }
 
-    $stmt = db()->prepare('SELECT id, password_hash FROM users WHERE username = :username LIMIT 1');
-    $stmt->execute([':username' => $username]);
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        flash_set('error', 'Ingresá un correo válido.');
+        redirect('/login');
+    }
+
+    $stmt = db()->prepare('SELECT id, password_hash FROM users WHERE email = :email LIMIT 1');
+    $stmt->execute([':email' => $email]);
     $row = $stmt->fetch();
 
     if (!is_array($row) || empty($row['password_hash']) || !password_verify($password, (string)$row['password_hash'])) {
-        flash_set('error', 'Usuario o contraseña incorrectos.');
+        flash_set('error', 'Correo o contraseña incorrectos.');
         redirect('/login');
     }
 
@@ -227,7 +232,7 @@ if ($path === '/login' && $method === 'POST') {
 }
 
 if ($path === '/register' && $method === 'GET') {
-    render('auth/register', ['title' => 'Crear cuenta', 'username' => (string)flash_get('old_username', '')]);
+    render('auth/register', ['title' => 'Crear cuenta', 'email' => (string)flash_get('old_email', '')]);
     exit;
 }
 
@@ -237,19 +242,19 @@ if ($path === '/register' && $method === 'POST') {
         redirect('/register');
     }
 
-    $username = trim((string)($_POST['username'] ?? ''));
+    $email = mb_strtolower(trim((string)($_POST['email'] ?? '')));
     $password = (string)($_POST['password'] ?? '');
     $passwordConfirm = (string)($_POST['password_confirm'] ?? '');
 
-    flash_set('old_username', $username);
+    flash_set('old_email', $email);
 
-    if ($username === '' || $password === '' || $passwordConfirm === '') {
+    if ($email === '' || $password === '' || $passwordConfirm === '') {
         flash_set('error', 'Completá todos los campos.');
         redirect('/register');
     }
 
-    if (!preg_match('/^[a-zA-Z0-9._-]{3,32}$/', $username)) {
-        flash_set('error', 'El usuario debe tener 3 a 32 caracteres (letras, números, punto, guion o guion bajo).');
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        flash_set('error', 'Ingresá un correo válido.');
         redirect('/register');
     }
 
@@ -267,14 +272,14 @@ if ($path === '/register' && $method === 'POST') {
     $now = now_atom();
 
     try {
-        $stmt = db()->prepare('INSERT INTO users (username, password_hash, created_at) VALUES (:username, :hash, :created_at)');
+        $stmt = db()->prepare('INSERT INTO users (email, password_hash, created_at) VALUES (:email, :hash, :created_at)');
         $stmt->execute([
-            ':username' => $username,
+            ':email' => $email,
             ':hash' => $hash,
             ':created_at' => $now,
         ]);
     } catch (PDOException $e) {
-        flash_set('error', 'Ese usuario ya existe.');
+        flash_set('error', 'Ese correo ya existe.');
         redirect('/register');
     }
 
@@ -1050,4 +1055,3 @@ if (in_array($path, ['/help'], true) && $method === 'GET') {
 http_response_code(404);
 header('Content-Type: text/plain; charset=utf-8');
 echo '404';
-
